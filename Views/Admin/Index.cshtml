@@ -1,0 +1,114 @@
+@model IEnumerable<UrlShortener.Models.UrlMapping>
+
+@{
+    ViewData["Title"] = "URL Shortener Admin";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">URL Shortener Admin</h1>
+            
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="mb-3">
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create New Short URL
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Short Code</th>
+                                    <th>Short URL</th>
+                                    <th>Original URL</th>
+                                    <th>Description</th>
+                                    <th>Created Date</th>
+                                    <th>Click Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Any())
+                                {
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <code>@Html.DisplayFor(modelItem => item.ShortCode)</code>
+                                            </td>
+                                            <td>
+                                                <a href="/@item.ShortCode" target="_blank" class="text-decoration-none">
+                                                    @(Context.Request.Scheme)://@(Context.Request.Host)/@item.ShortCode
+                                                    <i class="fas fa-external-link-alt ms-1" style="font-size: 0.8rem;"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="@item.OriginalUrl" target="_blank" class="text-truncate d-inline-block" style="max-width: 300px;">
+                                                    @Html.DisplayFor(modelItem => item.OriginalUrl)
+                                                    <i class="fas fa-external-link-alt ms-1" style="font-size: 0.8rem;"></i>
+                                                </a>
+                                            </td>
+                                            <td class="text-truncate" style="max-width: 200px;">
+                                                @Html.DisplayFor(modelItem => item.Description)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CreatedDate)
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">@Html.DisplayFor(modelItem => item.ClickCount)</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">
+                                            <p class="my-4">No short URLs created yet.</p>
+                                            <a asp-action="Create" class="btn btn-primary">Create Your First Short URL</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3>API Usage</h3>
+                <p>You can use CURL to create short URLs programmatically:</p>
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <code>
+                            curl -X POST @(Context.Request.Scheme)://@(Context.Request.Host)/api/urls \<br>
+                            &nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+                            &nbsp;&nbsp;-d '{"originalUrl":"http://example.com/very/long/url", "shortCode":"mycode", "description":"My URL"}'
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
