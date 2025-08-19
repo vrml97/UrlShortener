@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using UrlShortener.Data;
 
 var builder = WebApplication.CreateBuilder(args);
